@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>index</title>
+  <style>
+      iframe {
+          border: 1px solid;
+      }
+  </style>
+</head>
+<body>
+我是index
+
+<button onclick="sendMessage()">send message</button>
+
+<div>
+  <iframe src="./main.html" frameborder="0"></iframe>
+</div>
+<div>
+  <iframe src="./left.html" frameborder="0"></iframe>
+</div>
+<div>
+  <iframe src="./right.html" frameborder="0"></iframe>
+</div>
+
+<script src="./multipage-eventbus.js"></script>
+<script>
+  MultiPageEventBus.on('hello', function (data) {
+    console.log(document.title + ' receive msg')
+    console.log(data)
+  })
+
+  function sendMessage() {
+    MultiPageEventBus.emit('hello', {
+      name: 'hsc',
+      code: 'abc',
+      from: document.title
+    })
+  }
+</script>
+</body>
+</html>

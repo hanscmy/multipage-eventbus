@@ -1,5 +1,6 @@
 (function (win) {
   var options = {
+    initialized: false,
     globalTopic: 'multi-page-event-bus-global-topic'
   }
 
@@ -11,7 +12,7 @@
       event: event,
       data: data
     }
-    top.postMessage(msg, '*')
+    window.top.postMessage(msg, '*')
   }
 
   function on(event, callback) {
@@ -26,6 +27,9 @@
   }
 
   function init() {
+    if (options.initialized) {
+      return
+    }
     window.addEventListener('message', function (messageEvent) {
       var data = messageEvent.data
       var topic = data.topic
@@ -35,7 +39,7 @@
         // 事件分发给当前页面的iframe
         var iframes = document.querySelectorAll('iframe')
         if (iframes && iframes.length > 0) {
-          for (let i = 0; i < iframes.length; i++) {
+          for (var i = 0; i < iframes.length; i++) {
             iframes[i].contentWindow.postMessage(data, '*')
           }
         }
@@ -43,15 +47,16 @@
         // 查询事件监听并调用
         var listeners = eventListenerMap[event]
         if (listeners && listeners.length > 0) {
-          for (let i = 0; i < listeners.length; i++) {
+          for (var i = 0; i < listeners.length; i++) {
             listeners[i](innerData)
           }
         }
       }
     })
+    options.initialized = true
   }
 
-  init();
+  init()
 
   win.MultiPageEventBus = {
     emit: emit,
